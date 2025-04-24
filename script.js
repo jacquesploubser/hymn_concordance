@@ -1,6 +1,7 @@
 // script.js
 
-console.log("✅ script.js loaded");
+console.log("script.js loaded");
+console.log("script.js is running");
 
 let concordance = {};
 
