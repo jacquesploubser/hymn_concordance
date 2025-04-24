@@ -43,7 +43,9 @@ function showDetails(word) {
 }
 
 function applyFilter() {
-  // ...
+  console.log("🔍 applyFilter() fired");
+  const term = document.getElementById("search").value.toLowerCase();
+  // …
 }
 
 function highlight(text, term) {
@@ -52,7 +54,7 @@ function highlight(text, term) {
 
 // Replace window.onload with DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("📄 DOM loaded, wiring up controls");
-  document.getElementById("searchBtn").onclick = applyFilter;
+  // no need for searchBtn
+  document.querySelector("button").onclick = applyFilter;
   loadData();
 });
