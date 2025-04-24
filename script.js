@@ -1,21 +1,32 @@
 // script.js
 
-console.log("script.js loaded");
-console.log("script.js is running");
+console.log("✅ script.js loaded");
 
 let concordance = {};
 
 async function loadData() {
   try {
+    console.log("⏳ Fetching concordance.json...");
     const res = await fetch("concordance.json");
+    console.log("📥 Fetch status:", res.status);
+    
     concordance = await res.json();
+    console.log("🔑 Parsed JSON; word count =", Object.keys(concordance).length);
+    
+    // sanity check: does the container exist?
+    const listEl = document.getElementById("wordList");
+    console.log("👀 wordList container:", listEl);
+    
+    // render
     renderList(Object.keys(concordance));
-  } catch (err) {
-    console.error("Failed to load concordance.json:", err);
+  } 
+  catch (err) {
+    console.error("❌ loadData error:", err);
   }
 }
 
 function renderList(words) {
+  console.log("🎨 renderList got", words.length, "words");
   const list = document.getElementById("wordList");
   list.innerHTML = "";
   words.forEach(w => {
@@ -28,35 +39,20 @@ function renderList(words) {
 }
 
 function showDetails(word) {
-  const det = document.getElementById("details");
-  det.innerHTML = `<h2>${word.toUpperCase()}</h2>`;
-  concordance[word].occurrences.forEach(o => {
-    const p = document.createElement("p");
-    p.innerHTML = `
-      <strong>Hymn ${o.hymn_number}, Verse ${o.verse_number}</strong><br>
-      [Known: ${o.known}, Organ: ${o.organ}, AVT: ${o.avt}]<br>
-      ${highlight(o.verse_text, document.getElementById("search").value)}
-    `;
-    det.appendChild(p);
-  });
+  // ...
 }
 
 function applyFilter() {
-  const term = document.getElementById("search").value.trim().toLowerCase();
-  const matches = Object.keys(concordance)
-    .filter(w => w.includes(term));
-  renderList(matches);
-  document.getElementById("details").innerHTML = "";
+  // ...
 }
 
 function highlight(text, term) {
-  if (!term) return text;
-  const re = new RegExp(`(${term})`, "gi");
-  return text.replace(re, `<span class="highlight">$1</span>`);
+  // ...
 }
 
-// Wire up the Search button and load on start
-window.onload = () => {
+// Replace window.onload with DOMContentLoaded
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("📄 DOM loaded, wiring up controls");
   document.getElementById("searchBtn").onclick = applyFilter;
   loadData();
-};
+});
