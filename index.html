@@ -5,20 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hymnal Concordance Viewer</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 1em; }
-    #controls { margin-bottom: 1em; }
+    body {
+      font-family: "Arial Māori", sans-serif;
+      margin: 1em;
+    }
+
+    /* Controls at top */
+    #controls {
+      margin-bottom: 1em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      align-items: center;
+    }
+    #controls input[type="text"] {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    /* Results container becomes a flexbox */
+    #results {
+      display: flex;
+      gap: 1em;
+      height: calc(100vh - 8em);
+    }
+
+    /* Word list & details panes */
+    #wordList, #details {
+      border: 1px solid #ccc;
+      padding: 0.5em;
+      overflow-y: auto;
+    }
+
+    /* On wide screens: 30%/65% split */
     #wordList {
-      width: 30%; height: 400px;
-      float: left; overflow-y: auto;
-      border: 1px solid #ccc; padding: 0.5em;
+      flex: 0 0 30%;
     }
     #details {
-      width: 65%; height: 400px;
-      float: right; overflow-y: auto;
-      border: 1px solid #ccc; padding: 0.5em;
+      flex: 1 1 65%;
     }
-    .highlight { background: yellow; }
-    .word-item { cursor: pointer; margin: 0.2em 0; }
+
+    /* Highlighting */
+    .highlight {
+      background: yellow;
+    }
+    .word-item {
+      cursor: pointer;
+      margin: 0.2em 0;
+    }
+
+    /* Responsive: stack panes vertically on small screens */
+    @media (max-width: 600px) {
+      #results {
+        flex-direction: column;
+        height: auto;
+      }
+      #wordList, #details {
+        flex: none;
+        width: 100%;
+        height: 200px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -26,16 +73,18 @@
   <h1>Hymnal Concordance Viewer</h1>
 
   <div id="controls">
-  <input type="text" id="search" placeholder="Search words…" size="30">
-  <button id="searchBtn">Search</button>
-  <!-- New match-all checkbox -->
-  <label style="margin-left:1em;">
-    <input type="checkbox" id="matchAll"> Match all terms
-  </label>
-</div>
+    <input type="text" id="search" placeholder="Search words…" size="30">
+    <button id="searchBtn">Search</button>
+    <label>
+      <input type="checkbox" id="matchAll">
+      Match all terms
+    </label>
+  </div>
 
-  <div id="wordList"></div>
-  <div id="details"></div>
+  <div id="results">
+    <div id="wordList"></div>
+    <div id="details"></div>
+  </div>
 
   <script src="script.js"></script>
 </body>
