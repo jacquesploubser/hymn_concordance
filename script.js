@@ -61,23 +61,27 @@ function showDetails(word) {
 /** Filter the word list by the search term */
 function applyFilter() {
   console.log("🔍 applyFilter() fired");
-  // 1) Split input into terms
-  const raw = document.getElementById("search")
-                     .value
-                     .trim()
-                     .toLowerCase();
+  const raw   = document.getElementById("search")
+                        .value
+                        .trim()
+                        .toLowerCase();
   const terms = raw.split(/\s+/).filter(t => t);
 
-  // 2) If no terms, show everything
-  const keys = Object.keys(concordance);
+  const matchAll = document.getElementById("matchAll").checked;
+  const keys     = Object.keys(concordance);
+
   const matches = terms.length === 0
     ? keys
-    : keys.filter(w =>
-        // match any of the terms -- change to `.every` for “all terms”
-        terms.some(term => w.includes(term))
-      );
+    : keys.filter(w => {
+        if (matchAll) {
+          // only words containing ALL terms
+          return terms.every(term => w.includes(term));
+        } else {
+          // any-term mode (default)
+          return terms.some(term => w.includes(term));
+        }
+      });
 
-  // 3) Re-render
   renderList(matches);
   document.getElementById("details").innerHTML = "";
 }
