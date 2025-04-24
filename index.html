@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Hymnal Concordance Viewer</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 1em; }
+    #wordList { width: 30%; height: 400px; float: left; overflow: auto; }
+    #details  { width: 65%; height: 400px; float: right; overflow: auto; }
+    .highlight { background: yellow; }
+  </style>
+</head>
+<body>
+
+  <h1>Hymnal Concordance Viewer</h1>
+  <input id="search" placeholder="Search words…" size="30">
+  <button onclick="applyFilter()">Search</button>
+  <div id="wordList"></div>
+  <div id="details"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
