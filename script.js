@@ -61,32 +61,60 @@ function showDetails(word) {
 /** Filter the word list by the search term */
 function applyFilter() {
   console.log("🔍 applyFilter() fired");
-  const term = document.getElementById("search")
+  // 1) Split input into terms
+  const raw = document.getElementById("search")
                      .value
                      .trim()
                      .toLowerCase();
+  const terms = raw.split(/\s+/).filter(t => t);
 
-  // Build a filtered array of word keys
-  const matches = Object.keys(concordance)
-    .filter(w => w.includes(term));
+  // 2) If no terms, show everything
+  const keys = Object.keys(concordance);
+  const matches = terms.length === 0
+    ? keys
+    : keys.filter(w =>
+        // match any of the terms -- change to `.every` for “all terms”
+        terms.some(term => w.includes(term))
+      );
 
-  // Re-render the list with only matching words
+  // 3) Re-render
   renderList(matches);
-
-  // Clear the details pane when new filter is applied
   document.getElementById("details").innerHTML = "";
 }
 
 /** Highlight each occurrence of the term within the verse text */
-function highlight(text, term) {
-  if (!term) return text;
-  const re = new RegExp(`(${term})`, "gi");
-  return text.replace(re, `<span class="highlight">$1</span>`);
+function highlight(text, raw) {
+  if (!raw) return text;
+
+  // split into terms again
+  const terms = raw.trim().toLowerCase().split(/\s+/).filter(t => t);
+  let out = text;
+
+  terms.forEach(term => {
+    const re = new RegExp(`(${term})`, "gi");
+    out = out.replace(re, `<span class="highlight">$1</span>`);
+  });
+
+  return out;
 }
 
 // Wire up once the DOM is ready
+// Wire up once the DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
-  // Attach the Search button (first <button> in the page)
-  document.querySelector("button").onclick = applyFilter;
+  const searchInput = document.getElementById("search");
+  const searchBtn   = document.querySelector("button");
+
+  // 1️⃣ Click on Search button
+  searchBtn.onclick = applyFilter;
+
+  // 2️⃣ Press Enter in the input
+  searchInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();    // prevent any default form behavior
+      applyFilter();         // fire the same filter logic
+    }
+  });
+
+  // Load and render full concordance on start
   loadData();
 });
