@@ -1,4 +1,5 @@
 // script.js
+
 let concordance = {};
 
 async function loadData() {
