@@ -42,16 +42,18 @@ function showDetails(word) {
   const det = document.getElementById("details");
   det.innerHTML = `<h2>${word.toUpperCase()}</h2>`;
 
-  concordance[word].occurrences.forEach(o => {
-    const p = document.createElement("p");
-    p.innerHTML = `
-      <strong>Hymn ${o.hymn_number}, Verse ${o.verse_number}</strong><br>
-      [Known: ${o.known}, Organ: ${o.organ}, AVT: ${o.avt}]<br>
-      ${highlight(o.verse_text, document.getElementById("search").value)}
-    `;
-    det.appendChild(p);
-  });
-}
+concordance[word].occurrences.forEach(o => {
+  const p = document.createElement("p");
+  // use the raw metadata line if present
+  const metaLine = o.metadata || "";
+  p.innerHTML = `
+    <strong>Hymn ${o.hymn_number}, Verse ${o.verse_number}</strong><br>
+    ${metaLine}<br>
+    ${highlight(o.verse_text, document.getElementById("search").value)}
+  `;
+  det.appendChild(p);
+});
+
 
 /** Highlight all instances of each search term in a verse text */
 function highlight(text, raw) {
@@ -91,13 +93,14 @@ function renderHymnList(hymns) {
     div.className = "word-item";
     div.textContent = `Hymn ${o.hymn_number}, Verse ${o.verse_number} – ${o.hymn_title}`;
     div.onclick = () => {
-      const det = document.getElementById("details");
+      const metaLine = o.metadata || "";
       det.innerHTML = `
         <h2>Hymn ${o.hymn_number}, Verse ${o.verse_number}</h2>
-        <p>[Known: ${o.known}, Organ: ${o.organ}, AVT: ${o.avt}]</p>
+        <p>${metaLine}</p>
         <p>${highlight(o.verse_text, document.getElementById("search").value)}</p>
-      `;
-    };
+  `  ;
+};
+
     list.appendChild(div);
   });
 }
