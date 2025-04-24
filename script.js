@@ -130,4 +130,15 @@ function applyFilter() {
 // Wire up click, Enter, and initial load
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("search");
-  const btn   = document
+  const btn   = document.getElementById("searchBtn");
+
+  btn.onclick = applyFilter;
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      applyFilter();
+    }
+  });
+
+  loadData();
+});
