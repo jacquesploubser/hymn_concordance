@@ -42,18 +42,17 @@ function showDetails(word) {
   const det = document.getElementById("details");
   det.innerHTML = `<h2>${word.toUpperCase()}</h2>`;
 
-concordance[word].occurrences.forEach(o => {
-  const p = document.createElement("p");
-  // use the raw metadata line if present
-  const metaLine = o.metadata || "";
-  p.innerHTML = `
-    <strong>Hymn ${o.hymn_number}, Verse ${o.verse_number}</strong><br>
-    ${metaLine}<br>
-    ${highlight(o.verse_text, document.getElementById("search").value)}
-  `;
-  det.appendChild(p);
-});
-
+  concordance[word].occurrences.forEach(o => {
+    const p = document.createElement("p");
+    const metaLine = o.metadata || "";
+    p.innerHTML = `
+      <strong>Hymn ${o.hymn_number}, Verse ${o.verse_number}</strong><br>
+      ${metaLine}<br>
+      ${highlight(o.verse_text, document.getElementById("search").value)}
+    `;
+    det.appendChild(p);
+  });
+}
 
 /** Highlight all instances of each search term in a verse text */
 function highlight(text, raw) {
@@ -93,14 +92,14 @@ function renderHymnList(hymns) {
     div.className = "word-item";
     div.textContent = `Hymn ${o.hymn_number}, Verse ${o.verse_number} – ${o.hymn_title}`;
     div.onclick = () => {
+      const det = document.getElementById("details");
       const metaLine = o.metadata || "";
       det.innerHTML = `
         <h2>Hymn ${o.hymn_number}, Verse ${o.verse_number}</h2>
         <p>${metaLine}</p>
         <p>${highlight(o.verse_text, document.getElementById("search").value)}</p>
-  `  ;
-};
-
+      `;
+    };
     list.appendChild(div);
   });
 }
@@ -108,19 +107,19 @@ function renderHymnList(hymns) {
 /** Filter logic: words or hymns depending on “Match all” + term count */
 function applyFilter() {
   console.log("🔍 applyFilter() fired");
-  const raw   = document.getElementById("search").value.trim().toLowerCase();
+  const raw = document.getElementById("search").value.trim().toLowerCase();
   const terms = raw.split(/\s+/).filter(t => t);
   const matchAll = document.getElementById("matchAll").checked;
 
   if (matchAll && terms.length > 1) {
-    // hymn-level “all terms” search
+    // hymn‐level “all terms” search
     const hymns = findHymnsMatchingAll(terms);
     renderHymnList(hymns);
     document.getElementById("details").innerHTML = "";
     return;
   }
 
-  // otherwise word-level “any term” search
+  // otherwise word‐level “any term” search
   const keys = Object.keys(concordance);
   const matches = terms.length === 0
     ? keys
