@@ -1,5 +1,7 @@
 // script.js
 
+console.log("✅ script.js loaded");
+
 let concordance = {};
 
 async function loadData() {
