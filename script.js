@@ -26,6 +26,51 @@ async function loadData() {
   }
 }
 
+/**
+ * Find all unique hymn occurrences whose verse text contains EVERY search term.
+ * @param {string[]} terms  lower-cased search terms
+ * @returns {Array}         array of occurrence objects
+ */
+function findHymnsMatchingAll(terms) {
+  const hymns = {};  // key -> occurrence
+  Object.values(concordance).forEach(entry => {
+    entry.occurrences.forEach(o => {
+      const txt = o.verse_text.toLowerCase();
+      if (terms.every(t => txt.includes(t))) {
+        const key = `${o.hymn_number}:${o.verse_number}`;
+        hymns[key] = o;
+      }
+    });
+  });
+  return Object.values(hymns);
+}
+
+/**
+ * Render a list of hymn occurrences in the left pane.
+ * Clicking one will show its details on the right.
+ * @param {Array} hymns  array of occurrence objects
+ */
+function renderHymnList(hymns) {
+  const list = document.getElementById("wordList");
+  list.innerHTML = "";
+  hymns.forEach(o => {
+    const div = document.createElement("div");
+    div.className = "word-item";
+    div.textContent = `Hymn ${o.hymn_number}, Verse ${o.verse_number} – ${o.hymn_title}`;
+    div.onclick = () => {
+      // display that single occurrence
+      const det = document.getElementById("details");
+      const raw = document.getElementById("search").value;
+      det.innerHTML = `
+        <h2>Hymn ${o.hymn_number}, Verse ${o.verse_number}</h2>
+        <p>[Known: ${o.known}, Organ: ${o.organ}, AVT: ${o.avt}]</p>
+        <p>${highlight(o.verse_text, raw)}</p>
+      `;
+    };
+    list.appendChild(div);
+  });
+}
+
 /** Render a given array of word keys into the left pane */
 function renderList(words) {
   console.log("🎨 renderList got", words.length, "words");
@@ -61,26 +106,30 @@ function showDetails(word) {
 /** Filter the word list by the search term */
 function applyFilter() {
   console.log("🔍 applyFilter() fired");
-  const raw   = document.getElementById("search")
-                        .value
-                        .trim()
-                        .toLowerCase();
+  const raw   = document.getElementById("search").value.trim().toLowerCase();
   const terms = raw.split(/\s+/).filter(t => t);
+  const all   = document.getElementById("matchAll").checked;
 
-  const matchAll = document.getElementById("matchAll").checked;
-  const keys     = Object.keys(concordance);
+  // If “match all” + multiple terms, do a hymn-level search
+  if (all && terms.length > 1) {
+    const hymns = findHymnsMatchingAll(terms);
+    renderHymnList(hymns);
+    document.getElementById("details").innerHTML = "";
+    return;
+  }
 
+  // Otherwise, back to word-list “any term” logic
+  const keys = Object.keys(concordance);
   const matches = terms.length === 0
     ? keys
-    : keys.filter(w => {
-        if (matchAll) {
-          // only words containing ALL terms
-          return terms.every(term => w.includes(term));
-        } else {
-          // any-term mode (default)
-          return terms.some(term => w.includes(term));
-        }
-      });
+    : keys.filter(w =>
+        // match any of the terms in the word key
+        terms.some(t => w.includes(t))
+      );
+
+  renderList(matches);
+  document.getElementById("details").innerHTML = "";
+}
 
   renderList(matches);
   document.getElementById("details").innerHTML = "";
