@@ -25,9 +25,11 @@ function showDetails(word) {
   const entries = concordance[word].occurrences;
   entries.forEach(o => {
     let p = document.createElement("p");
-    p.innerHTML = `<strong>Hymn ${o.hymn_number}, Verse ${o.verse_number}</strong><br>
-                   [Known: ${o.known}, Organ: ${o.organ}, AVT: ${o.avt}]<br>
-                   ${highlight(o.verse_text, document.getElementById("search").value)}`;
+    p.innerHTML = `
+      <strong>Hymn ${o.hymn_number}, Verse ${o.verse_number}</strong><br>
+      [Known: ${o.known}, Organ: ${o.organ}, AVT: ${o.avt}]<br>
+      ${highlight(o.verse_text, document.getElementById("search").value)}
+    `;
     det.append(p);
   });
 }
@@ -35,7 +37,7 @@ function showDetails(word) {
 function applyFilter() {
   const term = document.getElementById("search").value.toLowerCase();
   const matches = Object.keys(concordance)
-    .filter(w => w.includes(term));
+                       .filter(w => w.includes(term));
   renderList(matches);
   document.getElementById("details").innerHTML = "";
 }
