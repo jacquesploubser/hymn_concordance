@@ -3,9 +3,13 @@
 let concordance = {};
 
 async function loadData() {
-  const res = await fetch("concordance.json");
-  concordance = await res.json();
-  renderList(Object.keys(concordance));
+  try {
+    const res = await fetch("concordance.json");
+    concordance = await res.json();
+    renderList(Object.keys(concordance));
+  } catch (err) {
+    console.error("Failed to load concordance.json:", err);
+  }
 }
 
 function renderList(words) {
@@ -14,30 +18,30 @@ function renderList(words) {
   words.forEach(w => {
     const div = document.createElement("div");
     div.textContent = `${w.toUpperCase()} (${concordance[w].count})`;
+    div.className = "word-item";
     div.onclick = () => showDetails(w);
-    list.append(div);
+    list.appendChild(div);
   });
 }
 
 function showDetails(word) {
   const det = document.getElementById("details");
   det.innerHTML = `<h2>${word.toUpperCase()}</h2>`;
-  const entries = concordance[word].occurrences;
-  entries.forEach(o => {
-    let p = document.createElement("p");
+  concordance[word].occurrences.forEach(o => {
+    const p = document.createElement("p");
     p.innerHTML = `
       <strong>Hymn ${o.hymn_number}, Verse ${o.verse_number}</strong><br>
       [Known: ${o.known}, Organ: ${o.organ}, AVT: ${o.avt}]<br>
       ${highlight(o.verse_text, document.getElementById("search").value)}
     `;
-    det.append(p);
+    det.appendChild(p);
   });
 }
 
 function applyFilter() {
-  const term = document.getElementById("search").value.toLowerCase();
+  const term = document.getElementById("search").value.trim().toLowerCase();
   const matches = Object.keys(concordance)
-                       .filter(w => w.includes(term));
+    .filter(w => w.includes(term));
   renderList(matches);
   document.getElementById("details").innerHTML = "";
 }
@@ -48,5 +52,8 @@ function highlight(text, term) {
   return text.replace(re, `<span class="highlight">$1</span>`);
 }
 
-// on load
-window.onload = loadData;
+// Wire up the Search button and load on start
+window.onload = () => {
+  document.getElementById("searchBtn").onclick = applyFilter;
+  loadData();
+};
