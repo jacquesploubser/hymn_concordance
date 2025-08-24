@@ -47,9 +47,11 @@
     <section id="controls" class="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/50 backdrop-blur px-3 py-3 shadow-soft">
       <label class="text-sm text-slate-600 dark:text-slate-300" for="dataset">Source</label>
       <select id="dataset" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-2 text-sm">
-        <option value="concordance.json">Hymn Collection (existing)</option>
-        <option value="hymnal_short.json">Hymnal – first 50</option>
-      </select>
+		<option value="concordance.json">Hymn Collection</option>
+		<option value="hymnal_full.json.gz">Hymnal</option>
+	  </select>
+
+
 
       <label for="search" class="sr-only">Search words</label>
       <input id="search" type="text" placeholder="Search words…" size="30"
@@ -100,6 +102,7 @@
       });
     })();
   </script>
+	<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
 
   <script src="script.js"></script>
 </body>
