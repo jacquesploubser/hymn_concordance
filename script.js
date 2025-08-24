@@ -2,8 +2,88 @@
 
 console.log("✅ script.js loaded");
 
+// Personalization config
+const OWNER_NAME = "Jacques Loubser";
+const OWNER_EMAIL = "jacques.p.loubser@gmail.com";
+const OWNER_LINKEDIN = "https://www.linkedin.com/in/jacques-p-loubser/";
+
 let concordance = {};
 let currentSource = 'concordance.json'; // default; will be set from the <select>
+
+/** Theme toggle */
+(function(){
+  const key='concordance-theme', root=document.documentElement;
+  const initial = localStorage.getItem(key);
+  if (initial === 'dark' || (!initial && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    root.classList.add('dark');
+  }
+  document.getElementById('themeToggle')?.addEventListener('click', () => {
+    root.classList.toggle('dark');
+    localStorage.setItem(key, root.classList.contains('dark') ? 'dark' : 'light');
+  });
+})();
+
+/** Footer + About personalization + keyboard shortcuts */
+document.addEventListener("DOMContentLoaded", () => {
+  // Footer
+  const y = document.getElementById("year");
+  if (y) y.textContent = new Date().getFullYear();
+  const nameA = document.getElementById("ownerNameLink");
+  if (nameA) {
+    nameA.textContent = OWNER_NAME;
+    nameA.href = OWNER_LINKEDIN;
+  }
+  const emailA = document.getElementById("ownerEmailLink");
+  if (emailA) {
+    emailA.textContent = "Email";
+    emailA.href = `mailto:${OWNER_EMAIL}`;
+  }
+
+  // About modal personalization
+  const aboutName = document.getElementById("aboutOwnerName");
+  if (aboutName) aboutName.textContent = OWNER_NAME;
+  const aboutLinkedIn = document.getElementById("aboutOwnerLinkedIn");
+  if (aboutLinkedIn) {
+    aboutLinkedIn.textContent = "LinkedIn";
+    aboutLinkedIn.href = OWNER_LINKEDIN;
+  }
+  const aboutEmail = document.getElementById("aboutOwnerEmail");
+  if (aboutEmail) {
+    aboutEmail.textContent = "Email";
+    aboutEmail.href = `mailto:${OWNER_EMAIL}`;
+  }
+
+  // Keyboard shortcut: '/' focuses search; Escape closes About
+  document.addEventListener("keydown", e => {
+    const tag = (document.activeElement?.tagName || '').toLowerCase();
+    const isTyping = tag === 'input' || tag === 'textarea';
+    if (e.key === "/" && !isTyping) {
+      e.preventDefault();
+      document.getElementById("search")?.focus();
+    }
+    if (e.key === "Escape") closeAbout();
+  });
+
+  // About modal events
+  document.getElementById("aboutOpen")?.addEventListener("click", openAbout);
+  document.getElementById("aboutClose")?.addEventListener("click", closeAbout);
+  document.getElementById("aboutClose2")?.addEventListener("click", closeAbout);
+  document.getElementById("aboutModal")?.addEventListener("click", (e) => {
+    if (e.target.id === "aboutModal") closeAbout();
+  });
+});
+
+function openAbout(){
+  const m = document.getElementById("aboutModal");
+  if (!m) return;
+  m.classList.remove("hidden");
+}
+
+function closeAbout(){
+  const m = document.getElementById("aboutModal");
+  if (!m) return;
+  m.classList.add("hidden");
+}
 
 /** Load and parse the JSON (or .gz) for the chosen dataset, then render */
 async function loadData(src) {
