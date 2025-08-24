@@ -3,59 +3,39 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hymn Collection Concordance</title>
+  <title>Concordance Search</title>
 
-  <!-- TailwindCSS CDN (no build step) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Tailwind theme extension (optional)
     tailwind.config = {
       theme: {
         extend: {
           colors: {
             brand: {
-              50:  '#f3f8f7',
-              100: '#e6f1ef',
-              200: '#c5e0db',
-              300: '#a3cfc7',
-              400: '#84b8ac', /* from your palette */
-              500: '#5aa596',
-              600: '#3d8577',
-              700: '#2e675c',
-              800: '#234f47',
-              900: '#17352f'
+              50:'#f3f8f7',100:'#e6f1ef',200:'#c5e0db',300:'#a3cfc7',400:'#84b8ac',
+              500:'#5aa596',600:'#3d8577',700:'#2e675c',800:'#234f47',900:'#17352f'
             }
           },
-          boxShadow: {
-            soft: '0 4px 16px rgba(0,0,0,0.08)'
-          }
+          boxShadow: { soft: '0 4px 16px rgba(0,0,0,0.08)' }
         }
       }
     }
   </script>
-
-  <!-- Prefer system font stack (fast) with fallback to Arial Māori -->
   <style>
-    :root { color-scheme: light dark; }
-    html { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Arial Māori", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
-    /* Keep highlight class for existing JS */
-    .highlight { background: #fff3b0; padding: .05rem .25rem; border-radius: .2rem; }
-    /* Preserve scrolling for the two panes */
-    #wordList, #details { overflow: auto; }
-    /* Make word items look tappable while keeping existing class hook */
-    .word-item { cursor: pointer; }
+    :root{ color-scheme: light dark; }
+    html{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Arial Māori", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+    .highlight{ background:#fff3b0; padding:.05rem .25rem; border-radius:.2rem; }
+    #wordList,#details{ overflow:auto; }
+    .word-item{ cursor:pointer; }
   </style>
 </head>
 <body class="bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-100">
-  <!-- Page wrapper -->
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-    <!-- Header -->
     <header class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">Hymn Collection Concordance</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Search words and explore occurrences across your hymn collection.</p>
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">Concordance Search</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Switch sources and search words across collections.</p>
       </div>
-      <!-- Theme toggle (no dependency on your script.js) -->
       <button id="themeToggle" type="button" class="self-start inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/60 shadow-soft">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4 hidden dark:block"><path d="M21.64 13a9 9 0 1 1-10.63-10.63a1 1 0 0 1 1.11 1.52A7 7 0 1 0 20.12 11.9a1 1 0 0 1 1.52 1.1Z"/></svg>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4 dark:hidden"><path d="M12 18a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1Zm6.364-2.05a1 1 0 0 1 1.415 0l.707.707a1 1 0 0 1-1.415 1.415l-.707-.708a1 1 0 0 1 0-1.414ZM4.515 15.95a1 1 0 0 1 0 1.414l-.707.708A1 1 0 1 1 2.393 16.66l.707-.707a1 1 0 0 1 1.415 0ZM12 4a1 1 0 0 1-1-1V2a1 1 0 1 1 2 0v1a1 1 0 0 1-1 1Zm7.778 2.222a1 1 0 0 1 0 1.414l-.707.707a1 1 0 1 1-1.415-1.414l.708-.707a1 1 0 0 1 1.414 0ZM4.93 4.222a1 1 0 0 1 1.414 0l.708.707A1 1 0 0 1 5.636 6.343l-.708-.707a1 1 0 0 1 0-1.414ZM3 12a1 1 0 0 1 1-1H5a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1Zm15 0a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1ZM6 12a6 6 0 1 1 12 0a6 6 0 0 1-12 0Z"/></svg>
@@ -63,12 +43,18 @@
       </button>
     </header>
 
-    <!-- Controls (IDs preserved for your existing JS) -->
+    <!-- Controls -->
     <section id="controls" class="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/50 backdrop-blur px-3 py-3 shadow-soft">
+      <label class="text-sm text-slate-600 dark:text-slate-300" for="dataset">Source</label>
+      <select id="dataset" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-2 text-sm">
+        <option value="concordance.json">Hymn Collection (existing)</option>
+        <option value="hymnal_short.json">Hymnal – first 50</option>
+      </select>
+
       <label for="search" class="sr-only">Search words</label>
       <input id="search" type="text" placeholder="Search words…" size="30"
              class="flex-1 min-w-[180px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm outline-none ring-0 focus:border-brand-400 focus:ring-2 focus:ring-brand-200" />
-      
+
       <button id="searchBtn" class="inline-flex items-center gap-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white px-3 py-2 text-sm shadow-soft">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 3.507 9.8l3.596 3.597a.75.75 0 1 0 1.06-1.06l-3.597-3.596A5.5 5.5 0 0 0 9 3.5ZM5 9a4 4 0 1 1 8 0a4 4 0 0 1-8 0Z" clip-rule="evenodd"/></svg>
         Search
@@ -80,38 +66,30 @@
       </label>
     </section>
 
-    <!-- Main results area: responsive two-pane layout -->
     <section id="results" class="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[calc(100vh-13rem)]">
-      <!-- Word list -->
       <aside id="wordList" aria-label="Word list"
              class="lg:col-span-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-soft p-3">
         <div class="sticky top-0 z-10 -m-3 mb-3 rounded-t-2xl border-b border-slate-100 dark:border-slate-800 bg-white/85 dark:bg-slate-900/80 backdrop-blur px-3 py-2">
           <h2 class="text-sm font-semibold tracking-wide text-slate-600 dark:text-slate-300 uppercase">Words</h2>
         </div>
-        <!-- Your JS will populate items here -->
       </aside>
 
-      <!-- Details pane -->
       <main id="details" aria-live="polite" aria-busy="false"
             class="lg:col-span-8 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-soft p-3">
         <div class="sticky top-0 z-10 -m-3 mb-3 rounded-t-2xl border-b border-slate-100 dark:border-slate-800 bg-white/85 dark:bg-slate-900/80 backdrop-blur px-3 py-2">
           <h2 class="text-sm font-semibold tracking-wide text-slate-600 dark:text-slate-300 uppercase">Details</h2>
         </div>
-        <!-- Your JS will render verses/lines here -->
       </main>
     </section>
 
-    <!-- Footer -->
     <footer class="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
       <p>Concordance UI • Optimised for accessibility (WCAG 2.1 AA), performance, and responsiveness.</p>
     </footer>
   </div>
 
-  <!-- Persisted dark mode (tiny script, isolated from your script.js) -->
   <script>
-    (function() {
-      const key = 'concordance-theme';
-      const root = document.documentElement;
+    (function(){
+      const key='concordance-theme', root=document.documentElement;
       const initial = localStorage.getItem(key);
       if (initial === 'dark' || (!initial && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         root.classList.add('dark');
@@ -123,7 +101,6 @@
     })();
   </script>
 
-  <!-- Keep your existing logic intact -->
   <script src="script.js"></script>
 </body>
 </html>
